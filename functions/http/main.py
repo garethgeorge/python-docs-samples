@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functions_framework
+
 # [START functions_http_xml]
 import json
 # [END functions_http_xml]
@@ -31,7 +33,7 @@ import xmltodict
 
 
 # [START functions_http_xml]
-
+@functions_framework.http
 def parse_xml(request):
     """ Parses a document of type 'text/xml'
     Args:
@@ -54,7 +56,6 @@ def get_file_path(filename):
     # on GCF. Thus, any files in it must fit in the instance's memory.
     file_name = secure_filename(filename)
     return os.path.join(tempfile.gettempdir(), file_name)
-
 
 def parse_multipart(request):
     """ Parses a 'multipart/form-data' upload request
@@ -92,6 +93,7 @@ def parse_multipart(request):
 
 
 # [START functions_http_cors]
+@functions_framework.http
 def cors_enabled_function(request):
     # For more information about CORS and CORS preflight requests, see:
     # https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
@@ -119,6 +121,7 @@ def cors_enabled_function(request):
 
 
 # [START functions_http_cors_auth]
+@functions_framework.http
 def cors_enabled_function_auth(request):
     # For more information about CORS and CORS preflight requests, see
     # https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
