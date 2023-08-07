@@ -13,34 +13,38 @@
 # limitations under the License.
 
 import main
+import json
+from functions_framework import create_app
 
 
 def test_googlechatbot():
-    expected = main.ChatResponse(
-        "avatarCard",
-        {
-            "name": "Avatar Card",
-            "header": {
-                "title": "Hello janedoe!",
-            },
-            "sections": [
-                {
-                    "widgets": [
-                        {
-                            "textParagraph": {
-                                "text": "Your avatar picture: ",
-                            },
-                        },
-                        {
-                            "image": {
-                                "imageUrl": "example.com/avatar.png",
-                            },
-                        },
-                    ],
+    expected = {
+        "cardsV2": {
+            "cardId": "avatarCard",
+            "card": {
+                "name": "Avatar Card",
+                "header": {
+                    "title": "Hello janedoe!",
                 },
-            ],
+                "sections": [
+                    {
+                        "widgets": [
+                            {
+                                "textParagraph": {
+                                    "text": "Your avatar picture: ",
+                                },
+                            },
+                            {
+                                "image": {
+                                    "imageUrl": "example.com/avatar.png",
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
         },
-    )
+    }
 
     request = {
         "message": {
@@ -51,6 +55,9 @@ def test_googlechatbot():
         },
     }
 
-    req = main.ChatRequest.from_dict(request)
-    res = main.googlechatbot(req)
-    assert expected == res
+    tc = create_app("googlechatbot", "main.py").test_client()
+    res = tc.post(
+        "/", data=json.dumps(request), headers={"Content-Type": "application/json"}
+    )
+
+    assert json.dumps(expected) == res.data.decode("utf-8")

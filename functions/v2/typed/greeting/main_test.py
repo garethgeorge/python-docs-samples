@@ -13,17 +13,23 @@
 # limitations under the License.
 
 import main
+import json
+from functions_framework import create_app
 
 
 def test_greeting():
-    expected = main.GreetingResponse("Hello Jane Doe!")
-
     request = {
         "first_name": "Jane",
         "last_name": "Doe",
     }
 
-    req = main.GreetingRequest.from_dict(request)
-    res = main.greeting(req)
+    expected = {
+        "message": "Hello Jane Doe!",
+    }
 
-    assert expected == res
+    tc = create_app("greeting", "main.py").test_client()
+    res = tc.post(
+        "/", data=json.dumps(request), headers={"Content-Type": "application/json"}
+    )
+
+    assert json.dumps(expected) == res.data.decode("utf-8")
